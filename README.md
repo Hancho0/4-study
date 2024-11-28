@@ -31,3 +31,39 @@ CView 파생 클래스 : 애플리케이션에서 자식 윈도우의 클라이�
 CDocument 파생 클래스 : 애플리케이션 내부에서 데이터를 읽고, 저장하는 기능을 가진 클래스<br>
 
 MDI 애플리케이션은 CMDIChildWnd 파생 클래스와 CView 파생 클래스, CDocument 파생 클라스가 하나의 템플릿(Template)으로 구성되며, 이러한 탬플릿이 하나 이상으로 구성되는 것이다. 그래서 여러 템플릿 애플리케이션이라고도 한다.
+
+[ 실습 ]
+
+단일문서 생성 후 클래스 뷰 에서 CMFC1View 에서 변수를 추가합니다
+
+**m_strWindowSize** 를 생성 후
+형식은 **CString** 으로 잡아줬습니다
+
+그 후 클래스 마법사에서 WM_SIZE 를 선택후 OnSize 메세지 핸들러 코드편집 해줬습니다.
+
+void CMFC1View::OnSize(UINT nType, int cx, int cy)<br>
+{<br>
+	CView::OnSize(nType, cx, cy);<br>
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.<br>
+	//윈도우 크기가 변경될 때 크기를 나타내는 문자열 생성<br>
+	m_strWindowSize.Format(_T("윈도우 크기는 넓이 %d, 높이 %d입니다"), cx, cy);<br>
+	//화면 갱신<br>
+	Invalidate();<br>
+}
+
+윈도우 크기가 변경될 때마다 OnSize() 메세지 핸들러 함수의 인자 cx,cy를 이용하여 윈도우 크기를 나타내는 문자열을 생성하고, Invalidate() 함수를 이용하여 OnDraw() 함수를 호출했습니다.
+
+그 후 OnDraw(CDC* pDC) 함수에 윈도우 크기를 나타내는 문자열을 출력하는 코드를 추가했습니다. (매개변수에 주석처리된 부분을 해재)
+
+void CMFC1View::OnDraw(CDC* pDC)<br>
+{<br>
+	CMFC1Doc* pDoc = GetDocument();<br>
+	ASSERT_VALID(pDoc);<br>
+	if (!pDoc)<br>
+		return;<br>
+
+	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.<br>
+	// 윈도우 크기를 나타내는 문자열을 윈도우 촤측 상단(10,10)에 출력<br>
+	pDC->TextOut(10, 10, m_strWindowSize);<br>
+}
